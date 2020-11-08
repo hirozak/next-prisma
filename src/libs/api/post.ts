@@ -1,7 +1,8 @@
 import { IPost, IPostBody } from '@/libs/model/post';
 import { functions } from '@/libs/firebase';
 
-export const getList = async (): Promise<IPost[]> => {
+export const getList = async (path?: string): Promise<IPost[]> => {
+  console.log(path);
   try {
     const func = functions.httpsCallable('getPostList');
     const result = await func();

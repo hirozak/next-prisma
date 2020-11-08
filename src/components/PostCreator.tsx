@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { mutate } from 'swr';
 import * as Yup from 'yup';
 import { TextField } from 'formik-material-ui';
 import styled from '@emotion/styled';
@@ -6,7 +7,6 @@ import { Button, Card } from '@material-ui/core';
 import { Field, Form, Formik } from 'formik';
 import { AuthContext } from '@/components/Auth';
 import { createPost } from '@/libs/api/post';
-import { IPost } from '@/libs/model/post';
 
 const FormContainer = styled.div({
   display: 'flex',
@@ -18,11 +18,7 @@ const FormContainer = styled.div({
   },
 });
 
-interface IProps {
-  addNewPost: (post: IPost) => void;
-}
-
-const PostCreator: React.FC<IProps> = ({ addNewPost }) => {
+const PostCreator: React.FC = () => {
   const { currentUser } = React.useContext(AuthContext);
   return (
     <React.Fragment>
@@ -34,11 +30,11 @@ const PostCreator: React.FC<IProps> = ({ addNewPost }) => {
               content: Yup.string().required('Required'),
             })}
             onSubmit={async (values, { setSubmitting, resetForm }) => {
-              const createdPost = await createPost({
+              await createPost({
                 content: values.content,
                 authorId: currentUser.id,
               });
-              addNewPost(createdPost);
+              mutate('/api/posts');
               setSubmitting(false);
               resetForm();
             }}
