@@ -1,4 +1,5 @@
 import * as React from 'react';
+import useSWR from 'swr';
 import { GetStaticProps } from 'next';
 import styled from '@emotion/styled';
 import { getList as getPostList } from '@/libs/api/post';
@@ -17,16 +18,24 @@ interface IProps {
 }
 
 const Index: React.FC<IProps> = ({ initialPosts }) => {
-  const [posts, setPosts] = React.useState<IPost[]>(initialPosts);
-  const addNewPost = (post: IPost) => {
-    setPosts([post, ...posts]);
-  };
+  // Use useState;
+  // const [posts, setPosts] = React.useState<IPost[]>(initialPosts);
+  // const addNewPost = (post: IPost) => {
+  //   setPosts([post, ...posts]);
+  // };
+
+  // Use useSWR;
+  const { data: posts } = useSWR('/api/posts', getPostList, {
+    initialData: initialPosts,
+    refreshInterval: 1000,
+  });
+
   return (
     <Container>
       <h1>Hello next-prisma</h1>
       <SignIn />
-      <PostCreator addNewPost={addNewPost} />
-      <PostList posts={posts} />
+      <PostCreator />
+      {posts && <PostList posts={posts} />}
     </Container>
   );
 };
